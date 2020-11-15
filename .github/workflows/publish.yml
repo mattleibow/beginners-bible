@@ -15,7 +15,7 @@ jobs:
       with:
         dotnet-version: 3.1.301
     - name: Build
-      run: dotnet run -- --content $GITHUB_WORKSPACE/content --templates $GITHUB_WORKSPACE/templates --output $GITHUB_WORKSPACE/output
+      run: dotnet run --project tools/tools/tools.csproj -- --content $GITHUB_WORKSPACE/content --templates $GITHUB_WORKSPACE/templates --output $GITHUB_WORKSPACE/output
     - name: Deploy
       uses: crazy-max/ghaction-github-pages@v2.2.0
       with:
