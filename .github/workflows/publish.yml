@@ -21,7 +21,7 @@ jobs:
       with:
         target_branch: site
         keep_history: true
-        build_dir: ${{ github.workspace }}/output
+        build_dir: output
         commit_message: Deployment of ${{ github.sha }}
         jekyll: false 
       env:
