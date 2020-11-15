@@ -1,3 +1,3 @@
-# THe Beginner's Bible
+# The Beginner's Bible
 
-Coming soon...
+Start reading https://mattleibow.github.io/beginners-bible/index.html
