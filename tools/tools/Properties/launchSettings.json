@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "tools": {
+      "commandName": "Project",
+      "commandLineArgs": "--content C:\\Projects\\beginners-bible\\content --templates C:\\Projects\\beginners-bible\\templates --output C:\\Projects\\beginners-bible\\output"
+    }
+  }
+}
