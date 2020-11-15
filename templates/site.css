@@ -1,0 +1,45 @@
+header,
+footer,
+.page {
+    padding: 1rem;
+}
+
+    .page img {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .page .page-text p {
+        margin-bottom: 0.5rem;
+        font-size: 125%;
+    }
+
+nav .nav-item + .nav-item {
+    margin-left: 1rem;
+}
+
+.flag-icon-left {
+    padding: 0 0 0 0.5rem;
+}
+
+.dropdown-item a {
+    color: #212529;
+}
+
+    .dropdown-item a:hover,
+    .dropdown-item a:focus {
+        color: #16181b;
+        text-decoration: none;
+    }
+
+    .dropdown-item.active a,
+    .dropdown-item a:active {
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .dropdown-item.disabled a,
+    .dropdown-item a:disabled {
+        color: #6c757d;
+        pointer-events: none;
+    }
