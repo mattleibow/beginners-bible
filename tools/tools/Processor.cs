@@ -83,7 +83,9 @@ namespace tools
 			// process each book
 			foreach (var book in books.Values)
 			{
-				var chapterPaths = Directory.EnumerateDirectories(rootPath);
+				var chapterPaths = Directory.EnumerateDirectories(rootPath).ToList();
+				chapterPaths.Sort(StringComparer.OrdinalIgnoreCase);
+
 				var chapterNumber = 1;
 				foreach (var chapterPath in chapterPaths)
 				{
@@ -106,7 +108,10 @@ namespace tools
 			if (Directory.Exists(imagesPath))
 				Directory.Delete(imagesPath, true);
 			Directory.CreateDirectory(imagesPath);
-			var chapterImages = Directory.EnumerateFiles(chapterPath, "*.jpg");
+
+			var chapterImages = Directory.EnumerateFiles(chapterPath, "*.jpg").ToList();
+			chapterImages.Sort(StringComparer.OrdinalIgnoreCase);
+
 			var imageNumber = 1;
 			foreach (var img in chapterImages)
 			{
