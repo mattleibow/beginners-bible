@@ -152,10 +152,10 @@ namespace tools
 			{
 				switch (item)
 				{
-					case YamlFrontMatterBlock:
+					case YamlFrontMatterBlock y:
 						// skip this
 						break;
-					case ThematicBreakBlock:
+					case ThematicBreakBlock t:
 						// new page
 						pageBlocks.Add(new List<Block>());
 						break;
