@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -111,6 +112,8 @@ namespace tools
 			{
 				var dest = Path.Combine(imagesPath, $"{imageNumber++}.jpg");
 				File.Copy(img, dest, true);
+
+				Console.WriteLine($"Copied '{img}' to '{dest}'.");
 			}
 
 			// read chapter content
@@ -129,18 +132,24 @@ namespace tools
 				ContentPath = contentPath,
 			};
 
-			// generate html files
 			var model = new ChapterPageModel
 			{
 				Book = book,
 				Chapter = chapter,
 				AllLanguages = languages,
 			};
-			var html = await razorEngine.CompileRenderAsync("chapter.cshtml", model);
-			var outPath = Path.Combine(outContentPath, chapter.Number.ToString());
-			if (!Directory.Exists(outPath))
-				Directory.CreateDirectory(outPath);
-			File.WriteAllText(Path.Combine(outPath, "index.html"), html);
+
+			// generate html files
+			{
+				var html = await razorEngine.CompileRenderAsync("chapter.cshtml", model);
+				var outPath = Path.Combine(outContentPath, chapter.Number.ToString());
+				if (!Directory.Exists(outPath))
+					Directory.CreateDirectory(outPath);
+				var dest = Path.Combine(outPath, "index.html");
+				File.WriteAllText(dest, html);
+
+				Console.WriteLine($"Saved '{book.Language.Name}' chapter {chapterNumber} to '{dest}'.");
+			}
 		}
 
 		private List<Page> ParsePages(MarkdownDocument chapterContent)
@@ -199,7 +208,12 @@ namespace tools
 		{
 			var nonTemplate = Path.Combine(templatesPath, path);
 			if (File.Exists(nonTemplate))
-				File.Copy(nonTemplate, Path.Combine(outputPath, path), true);
+			{
+				var dest = Path.Combine(outputPath, path);
+				File.Copy(nonTemplate, dest, true);
+
+				Console.WriteLine($"Copied '{nonTemplate}' to '{dest}'.");
+			}
 		}
 	}
 }
