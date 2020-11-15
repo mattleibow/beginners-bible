@@ -16,7 +16,7 @@
                 <h3 class="float-left">@Model.Book.Title</h3>
                 <nav class="nav float-right">
                     <div class="nav-item">
-                        <button type="button" class="btn btn-outline-secondary" href="../index.html">Contents</button>
+                        <button type="button" class="btn btn-outline-secondary" href="../index.htm">Contents</button>
                     </div>
                     <div class="nav-item dropdown">
                         <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="language" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -27,7 +27,7 @@
                             {
                                 <div class="dropdown-item @(lang == Model.Book.Language ? "active" : "")">
                                     <span class="flag-icon flag-icon-@(lang.Country)"></span>
-                                    <a class="flag-icon-left" href="../../@(lang.Code)/@(Model.Chapter.Number)/index.html" data-lang="@lang.Code">@lang.Name</a>
+                                    <a class="flag-icon-left" href="../../@(lang.Code)/@(Model.Chapter.Number)/index.htm" data-lang="@lang.Code">@lang.Name</a>
                                 </div>
                             }
                         </div>
@@ -74,7 +74,7 @@
                             <img src="../../images/@(Model.Chapter.Number + 1)/1.jpg" class="img-fluid mx-auto d-block" />
                             <div class="page-text row justify-content-center">
                                 <div class="col-auto">
-                                    <a role="button" class="btn btn-primary btn-lg" href="../@(Model.Chapter.Number + 1)/index.html">Read Now</a>
+                                    <a role="button" class="btn btn-primary btn-lg" href="../@(Model.Chapter.Number + 1)/index.htm">Read Now</a>
                                 </div>
                             </div>
                         </div>

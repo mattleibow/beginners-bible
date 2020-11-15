@@ -150,7 +150,7 @@ namespace tools
 				var outPath = Path.Combine(outContentPath, chapter.Number.ToString());
 				if (!Directory.Exists(outPath))
 					Directory.CreateDirectory(outPath);
-				var dest = Path.Combine(outPath, "index.html");
+				var dest = Path.Combine(outPath, "index.htm");
 				File.WriteAllText(dest, html);
 
 				Console.WriteLine($"Saved '{book.Language.Name}' chapter {chapterNumber} to '{dest}'.");
