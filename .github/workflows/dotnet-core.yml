@@ -1,0 +1,24 @@
+name: Publish
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.301
+    - name: Build
+      run: dotnet run -- --content $GITHUB_WORKSPACE/content --templates $GITHUB_WORKSPACE/templates --output $GITHUB_WORKSPACE/output
+    - name: Deploy
+      uses: crazy-max/ghaction-github-pages@v2.2.0
+      with:
+        target_branch: site
+        keep_history: true
+        build_dir: ${{ github.workspace }}/output
+        commit_message: Deployment of ${{ github.sha }}
