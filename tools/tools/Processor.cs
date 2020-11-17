@@ -49,6 +49,8 @@ namespace tools
 			if (!File.Exists(defaultLanguagePath))
 				throw new FileNotFoundException("Unable to find default content.yaml.");
 
+			var outImagesPath = Path.Combine(outputPath, "images");
+
 			var books = new Dictionary<string, Book>();
 
 			// read default language first
@@ -80,6 +82,22 @@ namespace tools
 				.OrderBy(b => b.Name)
 				.ToList();
 
+			// process the landing page
+			{
+				var cover = Path.Combine(rootPath, "cover.jpg");
+				CopyFile(cover, Path.Combine(outImagesPath, "cover.jpg"));
+
+				var landing = new LandingPageModel
+				{
+					Book = books[string.Empty],
+					AllBooks = books.Values.ToList(),
+					AllLanguages = languages,
+				};
+
+				var dest = await ProcessTemplate("landing.cshtml", outputPath, landing);
+				Console.WriteLine($"Saved landing page to '{dest}'.");
+			}
+
 			// process each book
 			foreach (var book in books.Values)
 			{
@@ -89,7 +107,6 @@ namespace tools
 				var chapterNumber = 1;
 				foreach (var chapterPath in chapterPaths)
 				{
-					var outImagesPath = Path.Combine(outputPath, "images");
 					var outContentPath = Path.Combine(outputPath, book.Language.Code);
 
 					await ProcessChapterAsync(book, chapterPath, chapterNumber++, languages, outImagesPath, outContentPath);
@@ -115,10 +132,7 @@ namespace tools
 			var imageNumber = 1;
 			foreach (var img in chapterImages)
 			{
-				var dest = Path.Combine(imagesPath, $"{imageNumber++}.jpg");
-				File.Copy(img, dest, true);
-
-				Console.WriteLine($"Copied '{img}' to '{dest}'.");
+				CopyFile(img, Path.Combine(imagesPath, $"{imageNumber++}.jpg"));
 			}
 
 			// read chapter content
@@ -146,15 +160,24 @@ namespace tools
 
 			// generate html files
 			{
-				var html = await razorEngine.CompileRenderAsync("chapter.cshtml", model);
 				var outPath = Path.Combine(outContentPath, chapter.Number.ToString());
-				if (!Directory.Exists(outPath))
-					Directory.CreateDirectory(outPath);
-				var dest = Path.Combine(outPath, "index.htm");
-				File.WriteAllText(dest, html);
-
+				var dest = await ProcessTemplate("chapter.cshtml", outPath, model);
 				Console.WriteLine($"Saved '{book.Language.Name}' chapter {chapterNumber} to '{dest}'.");
 			}
+		}
+
+		private async Task<string> ProcessTemplate(string template, string outPath, object? model)
+		{
+			var html = await razorEngine.CompileRenderAsync(template, model);
+
+			if (!Directory.Exists(outPath))
+				Directory.CreateDirectory(outPath);
+
+			var dest = Path.Combine(outPath, "index.htm");
+
+			File.WriteAllText(dest, html);
+
+			return dest;
 		}
 
 		private List<Page> ParsePages(MarkdownDocument chapterContent)
@@ -213,12 +236,14 @@ namespace tools
 		{
 			var nonTemplate = Path.Combine(templatesPath, path);
 			if (File.Exists(nonTemplate))
-			{
-				var dest = Path.Combine(outputPath, path);
-				File.Copy(nonTemplate, dest, true);
+				CopyFile(nonTemplate, Path.Combine(outputPath, path));
+		}
 
-				Console.WriteLine($"Copied '{nonTemplate}' to '{dest}'.");
-			}
+		private static void CopyFile(string img, string dest)
+		{
+			File.Copy(img, dest, true);
+
+			Console.WriteLine($"Copied '{img}' to '{dest}'.");
 		}
 	}
 }

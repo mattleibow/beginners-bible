@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>@Model.Book.Title</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icon-css@3.5.0/css/flag-icon.min.css" integrity="sha256-0n6YDYIexWJmHyTKtRRHTXvoanQrXpFfpsfv0h53qvk=" crossorigin="anonymous">
+    <link rel="stylesheet" href="site.css" crossorigin="anonymous">
+</head>
+<body>
+    <div class="root">
+        <header>
+        </header>
+        <main>
+            <div id="carousel" class="carousel slide" data-ride="carousel" data-wrap="false" data-interval="false">
+                <div class="carousel-inner">
+                    <div class="carousel-item page-even active">
+                        <div class="container-fluid page">
+                            <img src="images/cover.jpg" class="img-fluid mx-auto d-block" />
+                            <div class="container-fluid" style="bottom: 10%; position: absolute; width: 90%; padding: 0; margin: 0;">
+                                <div class="row justify-content-center">
+                                    <div class="col-auto mb-2">
+                                        <a role="button" class="btn btn-primary btn-lg lang-button" data-template="LANGUAGE/1/index.htm">Read Now</a>
+                                    </div>
+                                </div>
+                                <div class="row justify-content-center">
+                                    <div class="col-auto mb-2">
+                                        <a role="button" class="btn btn-secondary btn lang-button" data-template="LANGUAGE/index.htm">Contents</a>
+                                    </div>
+                                </div>
+                                <div class="row justify-content-center">
+                                    <div class="col-auto mb-2">
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button" id="language" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <span class="flag-icon flag-icon-id"></span><span class="flag-icon-left">Language</span>
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-center" aria-labelledby="language">
+                                                @foreach (var lang in Model.AllLanguages)
+                                                {
+                                                    <div class="dropdown-item lang-dropdown-item @(lang == Model.Book.Language ? "active" : "")">
+                                                        <span class="flag-icon flag-icon-@(lang.Country)"></span>
+                                                        <a class="flag-icon-left" href="#" data-lang="@lang.Code" data-country="@lang.Country">@lang.Name</a>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a class="carousel-control-prev" href="#carousel" role="button" data-slide="prev">
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carousel" role="button" data-slide="next">
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+        </main>
+        <footer>
+        </footer>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+        var buttons = $('.lang-button');
+        var ddFlag = $('#language span')[0]
+        var lastSelected;
+
+        $('.lang-dropdown-item a').click(function () {
+            updateLang(this);
+        });
+
+        function updateLang(link) {
+            var link = $(link);
+
+            var item = link.parent();
+            item.addClass('active');
+            if (lastSelected)
+                lastSelected.removeClass('active');
+            lastSelected = item;
+
+            var country = link.data('country');
+            ddFlag.className = "flag-icon flag-icon-" + country;
+
+            var lang = link.data('lang');
+            buttons.each(function () {
+                var template = $(this).data('template');
+                var href = template.replace('LANGUAGE', lang);
+                $(this).attr('href', href);
+            });
+        }
+
+        updateLang($('.lang-dropdown-item.active a'));
+    </script>
+</body>
+</html>
