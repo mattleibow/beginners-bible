@@ -20,7 +20,6 @@ jobs:
       uses: crazy-max/ghaction-github-pages@v2.2.0
       with:
         target_branch: site
-        keep_history: true
         build_dir: output
         commit_message: Deployment of ${{ github.sha }}
         jekyll: false 
