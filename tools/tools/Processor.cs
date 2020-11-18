@@ -49,8 +49,6 @@ namespace tools
 			if (!File.Exists(defaultLanguagePath))
 				throw new FileNotFoundException("Unable to find default content.yaml.");
 
-			var outImagesPath = Path.Combine(outputPath, "images");
-
 			var books = new Dictionary<string, Book>();
 
 			// read default language first
@@ -81,6 +79,9 @@ namespace tools
 				.Select(b => b.Language)
 				.OrderBy(b => b.Name)
 				.ToList();
+
+			var outImagesPath = Path.Combine(outputPath, "images");
+			Directory.CreateDirectory(outImagesPath);
 
 			// process the landing page
 			{
@@ -122,8 +123,6 @@ namespace tools
 		{
 			// copy all the chapter images to the output
 			var imagesPath = Path.Combine(outImagesPath, chapterNumber.ToString());
-			if (Directory.Exists(imagesPath))
-				Directory.Delete(imagesPath, true);
 			Directory.CreateDirectory(imagesPath);
 
 			var chapterImages = Directory.EnumerateFiles(chapterPath, "*.jpg").ToList();
