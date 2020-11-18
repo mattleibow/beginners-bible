@@ -31,6 +31,7 @@ namespace tools
 
 			markdownPipeline = new MarkdownPipelineBuilder()
 				.UseYamlFrontMatter()
+				.UseSoftlineBreakAsHardlineBreak()
 				.Build();
 
 			yamlDeserializer = new DeserializerBuilder()
