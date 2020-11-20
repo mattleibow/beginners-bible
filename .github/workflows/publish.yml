@@ -15,7 +15,7 @@ jobs:
       with:
         dotnet-version: 3.1.x
     - name: Build
-      run: dotnet build --project tools/tools/tools.csproj
+      run: dotnet build tools/tools/tools.csproj
     - name: Generate
       run: dotnet run --project tools/tools/tools.csproj -- --content $GITHUB_WORKSPACE/content --templates $GITHUB_WORKSPACE/templates --output $GITHUB_WORKSPACE/output
     - name: Deploy
