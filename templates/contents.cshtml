@@ -1,0 +1,86 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>@Model.Book.Title</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icon-css@3.5.0/css/flag-icon.min.css" integrity="sha256-0n6YDYIexWJmHyTKtRRHTXvoanQrXpFfpsfv0h53qvk=" crossorigin="anonymous">
+    <link rel="stylesheet" href="../site.css" crossorigin="anonymous">
+</head>
+<body>
+    <div class="root">
+        <header>
+            <div class="inner clearfix">
+                <h3 class="float-left">@Model.Book.Title</h3>
+                <nav class="nav float-right">
+                    <div class="nav-item dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="language" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="flag-icon flag-icon-@(Model.Book.Language.Country)"></span><span class="flag-icon-left">Language</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="language">
+                            @foreach (var lang in Model.AllLanguages)
+                            {
+                                <div class="dropdown-item @(lang == Model.Book.Language ? "active" : "")">
+                                    <span class="flag-icon flag-icon-@(lang.Country)"></span>
+                                    <a class="flag-icon-left" href="../@(lang.Code)/index.htm" data-lang="@lang.Code">@lang.Name</a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </header>
+        <main>
+            <div class="container-fluid">
+                <h2>Testements</h2>
+                @foreach (var testament in Model.Testaments)
+                {
+                    <p>@testament.Key</p>
+                    <ul>
+                        @foreach (var chapter in testament)
+                        {
+                            if (string.IsNullOrEmpty(chapter.Metadata.Tags.Book))
+                                continue;
+
+                            <li>
+                                <a href="@(chapter.Number)/index.htm">@chapter.Title</a>
+                                @if (Model.Book.IsTranslation && !chapter.IsTranslation)
+                                {
+                                    <i>(not yet translated)</i>
+                                }
+                            </li>
+                        }
+                    </ul>
+                }
+                <h2>People</h2>
+                @foreach (var person in Model.People)
+                {
+                    <p>@person.Key</p>
+                    <ul>
+                        @foreach (var chapter in person)
+                        {
+                            if (string.IsNullOrEmpty(chapter.Metadata.Tags.Book))
+                                continue;
+
+                            <li>
+                                <a href="@(chapter.Number)/index.htm">@chapter.Title</a>
+                                @if (Model.Book.IsTranslation && !chapter.IsTranslation)
+                                {
+                                    <i>(not yet translated)</i>
+                                }
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </main>
+        <footer>
+        </footer>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+</body>
+</html>

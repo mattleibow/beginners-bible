@@ -1,6 +1,10 @@
 ---
 title: The Beginning
 bible: 'Genesis 1'
+tags:
+  testament: Old Testament
+  book: Genesis
+  people: [ Adam, Eve ]
 ---
 
 In the beginning, the world was empty.

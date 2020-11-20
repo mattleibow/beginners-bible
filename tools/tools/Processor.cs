@@ -72,6 +72,7 @@ namespace tools
 
 				var book = yamlDeserializer.Deserialize<Book>(streamReader);
 				book.ContentPath = langPath;
+				book.IsTranslation = true;
 				books[book.Language.Code] = book;
 			}
 
@@ -103,16 +104,20 @@ namespace tools
 			// process each book
 			foreach (var book in books.Values)
 			{
+				var outContentPath = Path.Combine(outputPath, book.Language.Code);
+
 				var chapterPaths = Directory.EnumerateDirectories(rootPath).ToList();
 				chapterPaths.Sort(StringComparer.OrdinalIgnoreCase);
 
-				var chapterNumber = 1;
+				var chapters = new List<Chapter>();
 				foreach (var chapterPath in chapterPaths)
 				{
-					var outContentPath = Path.Combine(outputPath, book.Language.Code);
 
-					await ProcessChapterAsync(book, chapterPath, chapterNumber++, languages, outImagesPath, outContentPath);
+					var chapter = await ProcessChapterAsync(book, chapterPath, chapters.Count + 1, languages, outImagesPath, outContentPath);
+					chapters.Add(chapter);
 				}
+
+				await ProcessContentsIndexAsync(book, chapters, languages, outImagesPath, outContentPath);
 			}
 
 			// copy the rest of the files
@@ -120,7 +125,7 @@ namespace tools
 			CopyNonTemplate("site.js");
 		}
 
-		private async Task ProcessChapterAsync(Book book, string chapterPath, int chapterNumber, List<Language> languages, string outImagesPath, string outContentPath)
+		private async Task<Chapter> ProcessChapterAsync(Book book, string chapterPath, int chapterNumber, List<Language> languages, string outImagesPath, string outContentPath)
 		{
 			// copy all the chapter images to the output
 			var imagesPath = Path.Combine(outImagesPath, chapterNumber.ToString());
@@ -136,19 +141,46 @@ namespace tools
 			}
 
 			// read chapter content
+			var baseContentPath = Path.Combine(chapterPath, "content.md");
 			var contentPath = Path.Combine(chapterPath, $"content.{book.Language.Code}.md");
-			if (!File.Exists(contentPath))
-				contentPath = Path.Combine(chapterPath, "content.md");
+			var isTranslation = File.Exists(contentPath);
+			if (!isTranslation)
+				contentPath = baseContentPath;
 			var content = File.ReadAllText(contentPath);
 			var chapterContent = Markdown.Parse(content, markdownPipeline);
+			var metadata = ParseMetadata(chapterContent);
+
+			// if this is a translation, then load the tags from the base
+			ChapterMetadata? baseMetadata;
+			if (isTranslation)
+			{
+				var baseContent = File.ReadAllText(baseContentPath);
+				var baseChapterContent = Markdown.Parse(baseContent, markdownPipeline);
+				baseMetadata = ParseMetadata(baseChapterContent);
+			}
+			else
+			{
+				baseMetadata = metadata;
+			}
+
+			if (baseMetadata.Tags != null)
+			{
+				metadata.Tags = new ChapterMetadataTags
+				{
+					Testament = GetTranslation(book.Books, baseMetadata.Tags.Testament),
+					Book = GetTranslation(book.Books, baseMetadata.Tags.Book),
+					People = GetTranslation(book.People, baseMetadata.Tags.People)?.ToList(),
+				};
+			}
 
 			// create chapter
 			var chapter = new Chapter
 			{
 				Number = chapterNumber,
-				Metadata = ParseMetadata(chapterContent),
+				Metadata = metadata,
 				Pages = ParsePages(chapterContent),
 				ContentPath = contentPath,
+				IsTranslation = isTranslation,
 			};
 
 			var model = new ChapterPageModel
@@ -163,6 +195,24 @@ namespace tools
 				var outPath = Path.Combine(outContentPath, chapter.Number.ToString());
 				var dest = await ProcessTemplate("chapter.cshtml", outPath, model);
 				Console.WriteLine($"Saved '{book.Language.Name}' chapter {chapterNumber} to '{dest}'.");
+			}
+
+			return chapter;
+		}
+
+		private async Task ProcessContentsIndexAsync(Book book, List<Chapter> chapters, List<Language> languages, string outImagesPath, string outContentPath)
+		{
+			var model = new ContentsPageModel
+			{
+				Book = book,
+				Chapters = chapters,
+				AllLanguages = languages,
+			};
+
+			// generate html files
+			{
+				var dest = await ProcessTemplate("contents.cshtml", outContentPath, model);
+				Console.WriteLine($"Saved '{book.Language.Name}' contents to '{dest}'.");
 			}
 		}
 
@@ -245,5 +295,11 @@ namespace tools
 
 			Console.WriteLine($"Copied '{img}' to '{dest}'.");
 		}
+
+		private static string? GetTranslation(Dictionary<string, string>? dic, string? key) =>
+			dic != null && key != null && dic.TryGetValue(key, out var value) ? value : key;
+
+		private static IEnumerable<string>? GetTranslation(Dictionary<string, string>? dic, IEnumerable<string>? keys) =>
+			keys == null ? null : keys.Select(k => GetTranslation(dic, k)!);
 	}
 }

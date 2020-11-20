@@ -2,3 +2,10 @@ title: Alkitab Pemula
 language:
   code: id-id
   name: Indonesian
+
+books:
+  'Old Testament': 'Perjanjian Lama'
+  'Genesis': 'Kejadian'
+
+people:
+  'Eve': 'Hawa'
