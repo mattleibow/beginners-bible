@@ -12,7 +12,39 @@ namespace tools
 	{
 		static Task<int> Main(string[] args)
 		{
-			var rootCommand = new RootCommand("Book generator.")
+			var parseCommand = new Command("parse")
+			{
+				new Option<FileInfo>(
+					"--epub",
+					"The epub file to read.")
+					{ IsRequired = true }
+					.ExistingOnly(),
+				new Option<DirectoryInfo>(
+					"--output",
+					"The directory for the generated files.")
+					{ IsRequired = true }
+					.LegalFilePathsOnly(),
+			};
+			parseCommand.Handler = CommandHandler.Create<FileInfo, DirectoryInfo>(async (epub, output) =>
+			{
+				if (epub == null)
+				{
+					Console.Error.WriteLine("The epub file with the content of the book was not specified.");
+					return 1;
+				}
+				if (output == null)
+				{
+					Console.Error.WriteLine("The directory for the generated files was not specified.");
+					return 1;
+				}
+
+				var parser = new EpubParser(epub.FullName, output.FullName);
+				await parser.ProcessAsync();
+
+				return 0;
+			});
+
+			var generateCommand = new Command("generate")
 			{
 				new Option<DirectoryInfo>(
 					"--content",
@@ -30,8 +62,7 @@ namespace tools
 					{ IsRequired = true }
 					.LegalFilePathsOnly(),
 			};
-
-			rootCommand.Handler = CommandHandler.Create<DirectoryInfo, DirectoryInfo, DirectoryInfo>(async (content, templates, output) =>
+			generateCommand.Handler = CommandHandler.Create<DirectoryInfo, DirectoryInfo, DirectoryInfo>(async (content, templates, output) =>
 			{
 				if (content == null)
 				{
@@ -54,6 +85,12 @@ namespace tools
 
 				return 0;
 			});
+
+			var rootCommand = new RootCommand("Book generator.")
+			{
+				parseCommand,
+				generateCommand,
+			};
 
 			var parser = new CommandLineBuilder(rootCommand)
 				.UseHelp()

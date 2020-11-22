@@ -1,7 +1,7 @@
-name: Publish
+name: Build
 
 on:
-  push:
+  pull_request:
     branches: [ main ]
 
 jobs:
@@ -18,12 +18,3 @@ jobs:
       run: dotnet build tools/tools/tools.csproj
     - name: Generate
       run: dotnet run --project tools/tools/tools.csproj -- generate --content $GITHUB_WORKSPACE/content --templates $GITHUB_WORKSPACE/templates --output $GITHUB_WORKSPACE/output
-    - name: Deploy
-      uses: crazy-max/ghaction-github-pages@v2.2.0
-      with:
-        target_branch: site
-        build_dir: output
-        commit_message: Deployment of ${{ github.sha }}
-        jekyll: false 
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -16,7 +16,7 @@ namespace tools
 
 		public string? Bible => Metadata?.Bible;
 
-		public List<Page> Pages { get; set; } = new List<Page>();
+		public List<Page>? Pages { get; set; }
 
 		public bool IsTranslation { get; set; }
 	}
