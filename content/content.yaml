@@ -2,3 +2,8 @@ title: The Beginner's Bible
 language:
   code: en-us
   name: English (US)
+skip:
+  - 001-cover-page
+  - 002-title-page
+  - 003-copyright-page
+  - 004-contents
