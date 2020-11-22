@@ -181,6 +181,9 @@ namespace tools
 				baseMetadata = metadata;
 			}
 
+			// copy some properties
+			metadata.HideInContents = baseMetadata.HideInContents;
+
 			// translate tags
 			if (baseMetadata.Tags != null)
 			{
