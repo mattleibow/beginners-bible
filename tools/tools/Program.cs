@@ -25,7 +25,7 @@ namespace tools
 					{ IsRequired = true }
 					.LegalFilePathsOnly(),
 			};
-			parseCommand.Handler = CommandHandler.Create<FileInfo, DirectoryInfo>(async (epub, output) =>
+			parseCommand.Handler = CommandHandler.Create<bool, FileInfo, DirectoryInfo>(async (verbose, epub, output) =>
 			{
 				if (epub == null)
 				{
@@ -38,7 +38,7 @@ namespace tools
 					return 1;
 				}
 
-				var parser = new EpubParser(epub.FullName, output.FullName);
+				var parser = new EpubParser(verbose, epub.FullName, output.FullName);
 				await parser.ProcessAsync();
 
 				return 0;
@@ -62,7 +62,7 @@ namespace tools
 					{ IsRequired = true }
 					.LegalFilePathsOnly(),
 			};
-			generateCommand.Handler = CommandHandler.Create<DirectoryInfo, DirectoryInfo, DirectoryInfo>(async (content, templates, output) =>
+			generateCommand.Handler = CommandHandler.Create<bool, DirectoryInfo, DirectoryInfo, DirectoryInfo>(async (verbose, content, templates, output) =>
 			{
 				if (content == null)
 				{
@@ -80,7 +80,7 @@ namespace tools
 					return 1;
 				}
 
-				var processor = new Processor(content.FullName, output.FullName, templates.FullName);
+				var processor = new Processor(verbose, content.FullName, output.FullName, templates.FullName);
 				await processor.ProcessAsync();
 
 				return 0;
@@ -97,6 +97,7 @@ namespace tools
 				.UseSuggestDirective()
 				.UseTypoCorrections()
 				.UseVersionOption()
+				.AddGlobalOption(new Option("--verbose", "Use verbose output."))
 				.Build();
 
 			return parser.InvokeAsync(args);

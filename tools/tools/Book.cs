@@ -15,5 +15,7 @@ namespace tools
 		public Dictionary<string, string> Books { get; set; }
 
 		public Dictionary<string, string> People { get; set; }
+
+		public List<string> Skip { get; set; }
 	}
 }

@@ -41,16 +41,16 @@
                     <ul>
                         @foreach (var chapter in testament)
                         {
-                            if (string.IsNullOrEmpty(chapter.Metadata.Tags.Book))
-                                continue;
-
-                            <li>
-                                <a href="@(chapter.Number)/index.htm">@chapter.Title</a>
-                                @if (Model.Book.IsTranslation && !chapter.IsTranslation)
-                                {
-                                    <i>(not yet translated)</i>
-                                }
-                            </li>
+                            if (!chapter.Metadata.HideInContents)
+                            {
+                                <li>
+                                    <a href="@(chapter.Number)/index.htm">@chapter.Title</a>
+                                    @if (Model.Book.IsTranslation && !chapter.HasTranslation)
+                                    {
+                                        <i>(not yet translated)</i>
+                                    }
+                                </li>
+                            }
                         }
                     </ul>
                 }
@@ -61,19 +61,35 @@
                     <ul>
                         @foreach (var chapter in person)
                         {
-                            if (string.IsNullOrEmpty(chapter.Metadata.Tags.Book))
-                                continue;
-
+                            if (!chapter.Metadata.HideInContents)
+                            {
+                                <li>
+                                    <a href="@(chapter.Number)/index.htm">@chapter.Title</a>
+                                    @if (Model.Book.IsTranslation && !chapter.HasTranslation)
+                                    {
+                                        <i>(not yet translated)</i>
+                                    }
+                                </li>
+                            }
+                        }
+                    </ul>
+                }
+                <h2>Stories</h2>
+                <ul>
+                    @foreach (var chapter in Model.Chapters)
+                    {
+                        if (!chapter.Metadata.HideInContents)
+                        {
                             <li>
                                 <a href="@(chapter.Number)/index.htm">@chapter.Title</a>
-                                @if (Model.Book.IsTranslation && !chapter.IsTranslation)
+                                @if (Model.Book.IsTranslation && !chapter.HasTranslation)
                                 {
                                     <i>(not yet translated)</i>
                                 }
                             </li>
                         }
-                    </ul>
-                }
+                    }
+                </ul>
             </div>
         </main>
         <footer>

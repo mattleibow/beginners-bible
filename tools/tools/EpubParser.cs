@@ -10,13 +10,15 @@ namespace tools
 {
 	public class EpubParser
 	{
-		private ZipArchive epubArchive;
+		private readonly bool verbose;
 		private string output;
+		private ZipArchive epubArchive;
 
-		public EpubParser(string epub, string output)
+		public EpubParser(bool verbose, string epub, string output)
 		{
-			epubArchive = ZipFile.OpenRead(epub);
+			this.verbose = verbose;
 			this.output = output;
+			epubArchive = ZipFile.OpenRead(epub);
 		}
 
 		public async Task ProcessAsync()
@@ -58,7 +60,7 @@ namespace tools
 			if (xbody == null)
 				return;
 
-			var xchapter = xbody.Elements(ns + "div").FirstOrDefault(x => x.Attribute("class").Value == "chapter");
+			var xchapter = xbody.Elements(ns + "div").FirstOrDefault(x => x.Attribute("class").Value == "chapter" || x.Attribute("class").Value == "section");
 			if (xchapter == null)
 				return;
 
@@ -68,7 +70,6 @@ namespace tools
 			{
 				ContentPath = entry.Href,
 				Number = index,
-				IsTranslation = false,
 				Metadata = new ChapterMetadata
 				{
 					Tags = new ChapterMetadataTags
@@ -161,7 +162,7 @@ namespace tools
 			var toc = epubArchive.GetEntry("OEBPS/toc.ncx");
 			using var stream = toc.Open();
 
-			var xdoc = XDocument.Load(stream);
+			var xdoc = await XDocument.LoadAsync(stream, LoadOptions.None, default);
 			var ns = xdoc.Root.Name.Namespace;
 
 			var entries = xdoc

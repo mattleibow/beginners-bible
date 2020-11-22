@@ -13,6 +13,9 @@ namespace tools
 
 		[YamlMember]
 		public ChapterMetadataTags? Tags { get; set; }
+
+		[YamlMember]
+		public bool HideInContents { get; set; }
 	}
 
 	public class ChapterMetadataTags
@@ -21,7 +24,7 @@ namespace tools
 		public string? Testament { get; set; }
 
 		[YamlMember]
-		public string? Book { get; set; }
+		public List<string>? Books { get; set; }
 
 		[YamlMember]
 		public List<string>? People { get; set; }

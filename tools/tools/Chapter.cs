@@ -18,6 +18,6 @@ namespace tools
 
 		public List<Page>? Pages { get; set; }
 
-		public bool IsTranslation { get; set; }
+		public bool HasTranslation { get; set; }
 	}
 }
